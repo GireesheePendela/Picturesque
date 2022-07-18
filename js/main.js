@@ -51,6 +51,7 @@ function formatBytes(bytes) {
 
 function hide() {
   if (window.Worker) {
+    const compression = document.querySelector("#hdeCompression").value;
     const password = document.querySelector("#hidePasswordConf").value;
 
     const hideWorker = new window.Worker("./js/hide.js");
@@ -59,6 +60,7 @@ function hide() {
     hideWorker.postMessage({
       image: hideImage,
       files: hideFiles,
+      compression: compression,
       password: password,
     });
 
