@@ -1,12 +1,13 @@
 document.addEventListener("DOMContentLoaded", function (event) {
   // Assign references to labels.
-  const labels = document.getElementsByTagName("label");
-  for (let i = 0; i < labels.length; i++) {
-    if (labels[i].htmlFor !== "") {
-      const elem = document.getElementById(labels[i].htmlFor);
-      if (elem) elem.label = labels[i];
+  const labels = document.querySelectorAll("label");
+  for (let label of labels) {
+    if (label.htmlFor !== "") {
+      const elem = document.getElementById(label.htmlFor);
+      if (elem) elem.label = label;
     }
   }
+
   // Check if browser supports web workers.
   if (!window.Worker) {
     document.querySelector("#webWorkerAlert").classList.remove("d-none");
@@ -16,27 +17,24 @@ var fileHandler = (function () {
   let hideFiles;
   let hideImage;
   let revealImage;
-  /**
-   * Print uploaded files to output.
-   */
+
+  // Print uploaded files to output.
   function printFiles(files, element) {
     let output = [];
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
+    for (let file of files) {
       output.push(
         '<li class="mt-1">',
-        escape(f.name),
+        escape(file.name),
         '<span class="text-muted"> - ',
-        formatBytes(f.size),
+        formatBytes(file.size),
         "</span></li>"
       );
     }
     // Add files to output.
     element.innerHTML = output.join("");
   }
-  /**
-   * Format file size into appropriate unit.
-   */
+
+  // Format file size into appropriate unit.
   function formatBytes(bytes) {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -45,11 +43,8 @@ var fileHandler = (function () {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
-  /**
-   * Hide the given files within the given image.
-   * @param files - The files to hide.
-   * @param image - The image to hide the files within.
-   */
+
+  // Hide the given files within the given image.
   function hide() {
     if (window.Worker) {
       const compression = document.querySelector("#hideCompression").value;
@@ -72,20 +67,64 @@ var fileHandler = (function () {
         progressBar.style.width = e.data.status * 25 + "%";
         progressBar.setAttribute("aria-valuenow", e.data.status * 25);
 
-        if (e.data.status === 3) {
+        if (e.data.status === 4) {
           setTimeout(function () {
             progressText.innerHTML = "Hide successful!";
             progressBar.classList.remove("progress-bar-animated");
             progressBar.classList.add("bg-success");
+
+            const resultBlob = e.data.result;
+
+            const urlCreator = window.URL || window.webkitURL;
+            const resultBase64 = urlCreator.createObjectURL(resultBlob);
+
+            const resultOut = document.querySelector("#resultOut");
+
+            resultOut.innerHTML =
+              "Image containing hidden files:" +
+              '<img id="resultHideOut" class="mt-3">';
+            const resultHideOut = document.querySelector("#resultHideOut");
+            resultHideOut.style.width = "100%";
+            resultHideOut.src = resultBase64;
+          }, 600);
+        }
+      };
+    }
+  }
+
+  function reveal() {
+    if (window.Worker) {
+      const password = document.querySelector("#revealPassword").value;
+
+      const revealWorker = new window.Worker("./js/reveal.js");
+
+      revealWorker.postMessage({
+        image: revealImage,
+        password: password,
+      });
+
+      const progressBar = document.querySelector("#progressBar");
+      const progressText = document.querySelector("#progressText");
+      progressText.innerHTML = "Revealing files from image.";
+
+      revealWorker.onmessage = function (e) {
+        progressBar.style.width = e.data.status * 25 + "%";
+        progressBar.setAttribute("aria-valuenow", e.data.status * 25);
+
+        if (e.data.status === 4) {
+          setTimeout(function () {
+            progressText.innerHTML = "Reveal successful!";
+            progressBar.classList.remove("progress-bar-animated");
+            progressBar.classList.add("bg-success");
+
+            console.log(e.data.files);
           }, 600);
         }
       };
     }
   }
   return {
-    /**
-     * Handle hide files upload.
-     */
+    // Handle hide files upload.
     handleHideFiles: function (e) {
       const filesInput = document.querySelector("#hideFiles");
       const filesOutput = document.querySelector("#hideFilesOut");
@@ -106,9 +145,8 @@ var fileHandler = (function () {
         (hideFiles.length === 1 ? " file chosen" : " files chosen");
       filesInput.label.classList.add("text-success");
     },
-    /**
-     * Handle hide image upload.
-     */
+
+    // Handle hide image upload.
     handleHideImage: function (e) {
       const image = e.target.files;
       hideImage = undefined;
@@ -130,9 +168,11 @@ var fileHandler = (function () {
       if (image[0].type.indexOf("image") !== -1) {
         hideImage = image[0];
         printFiles(image, imageOutput);
+
         // Add valid class to input.
         imageInput.classList.remove("is-invalid");
         imageInput.classList.add("is-valid");
+
         // Make everything green.
         imageInput.label.innerHTML = "Image chosen";
         imageInput.label.classList.remove("text-danger");
@@ -151,9 +191,8 @@ var fileHandler = (function () {
         feedback.style.display = "block";
       }
     },
-    /**
-     * Handle reveal image upload.
-     */
+
+    // Handle reveal image upload.
     handleRevealImage: function (e) {
       const image = e.target.files;
       revealImage = undefined;
@@ -196,28 +235,23 @@ var fileHandler = (function () {
         feedback.style.display = "block";
       }
     },
-    /**
-     * Hide files.
-     */
+    // Hide files.
     hideSubmit: function () {
       if (hideFiles && hideImage && validateHidePassword()) {
         window.history.replaceState({}, "", "?hide");
         hide();
       }
     },
-    /**
-     * Reveal files.
-     */
+    // Reveal files.
     revealSubmit: function () {
       if (revealImage) {
         window.history.replaceState({}, "", "?reveal");
+        reveal();
       }
     },
   };
 })();
-/**
- * Check password field and confirm password are the same.
- */
+//Check password field and confirm password are the same.
 function validateHidePassword() {
   const hidePasswordConf = document.querySelector("#hidePasswordConf");
   if (
