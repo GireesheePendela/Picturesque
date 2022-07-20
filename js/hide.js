@@ -15,7 +15,7 @@ this.onmessage = function (e) {
   });
 
   worker.postMessage({
-    status: 0,
+    progress: 0,
   });
 
   // Read image file as array buffer.
@@ -23,7 +23,7 @@ this.onmessage = function (e) {
   reader.readAsArrayBuffer(image);
   reader.onload = function () {
     worker.postMessage({
-      status: 1,
+      progress: 1,
     });
 
     // Array buffer to Uint8Array.
@@ -44,7 +44,7 @@ this.onmessage = function (e) {
       })
       .then(function (zipUint) {
         worker.postMessage({
-          status: 2,
+          progress: 2,
         });
 
         const passwordUint = new worker.TextEncoder().encode(password);
@@ -115,7 +115,7 @@ this.onmessage = function (e) {
                     });
 
                     worker.postMessage({
-                      status: 4,
+                      progress: 4,
                       result: resultBlob,
                     });
 
