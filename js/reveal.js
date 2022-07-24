@@ -4,9 +4,6 @@ this.onmessage = function (e) {
   const image = e.data.image;
   const password = e.data.password;
 
-  // Import scripts.
-  worker.importScripts("../3rdp/jszip.min.js");
-
   worker.postMessage({
     progress: 0,
   });
