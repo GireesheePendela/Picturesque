@@ -14,7 +14,7 @@ onmessage = function (e) {
       Math.abs(prev - e.data.compression)
       ? curr
       : prev;
-  });
+  }, 0);
 
   worker.postMessage({
     progress: 0,
