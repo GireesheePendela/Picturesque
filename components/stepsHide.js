@@ -68,17 +68,19 @@ const StepsHide = () => {
           valid={password === confirmPassword}
         />
       </FlowStep>
-      <ProgressButton
-        onClick={hideFiles}
-        progress={progress}
-        download={result && URL.createObjectURL(result)}
-      >
-        {result
-          ? "Download image"
-          : hiding
-          ? "Hiding files..."
-          : "Hide files inside image"}
-      </ProgressButton>
+      <FlowStep>
+        <ProgressButton
+          onClick={hideFiles}
+          progress={progress}
+          download={result && URL.createObjectURL(result)}
+        >
+          {result
+            ? "Download image"
+            : hiding
+            ? "Hiding files..."
+            : "Hide files inside image"}
+        </ProgressButton>
+      </FlowStep>
     </>
   );
 };

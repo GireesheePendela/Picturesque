@@ -1,4 +1,4 @@
-import HideWorker from "./hide.worker";
+import HideWorker from "../../workers/hide.worker";
 import RevealWorker from "./reveal.worker";
 import { validateHidePassword } from "./helper";
 
@@ -8,9 +8,6 @@ export default class FileHandler {
   revealImage;
   calculated = false;
 
-  /**
-   * @private Print uploaded files to output.
-   */
   printFiles(files, element) {
     const output = Array.from(files).reduce(
       (prev, file) => [
