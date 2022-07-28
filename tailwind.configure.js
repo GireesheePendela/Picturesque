@@ -27,7 +27,8 @@ module.exports = {
     },
   },
   variants: {
-    backgroundColor: ({ after }) => after(["checked"]),
-    boxShadow: ({ after }) => after(["focus-visible"], "focus"),
+    backgroundColor: ({ after }) => after(["checked", "active"]),
+    ringWidth: ({ after }) => after(["focus-visible"], "focus"),
+    textDecoration: ({ after }) => after(["focus-visible"], "focus"),
   },
 };
