@@ -4,7 +4,6 @@ import FlowStep from "./FlowStep";
 import FlowStepList from "./FlowStepList";
 import StepsFind from "./StepsFind";
 import StepsHide from "./StepsHide";
-
 const Flow = () => {
   const [flow, setFlow] = useState("hide");
   const chosenFlowSteps = (() => {
