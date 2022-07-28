@@ -21,6 +21,7 @@ module.exports = {
     },
   },
   variants: {
+    animation: ({ after }) => after(["hover"]),
     backgroundColor: ({ after }) => after(["checked", "active"]),
     borderColor: ({ after }) => after(["checked"]),
     ringWidth: ({ after }) => after(["focus-visible"], "focus"),
