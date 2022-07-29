@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import FlowStep from "./FlowStep";
+import { useState } from "react";
 import FormFiles from "./FormFiles";
 import FormPassword from "./FormPassword";
 import ProgressButton from "./ProgressButton";
 import FindWorker from "../workers/Find.worker";
-const StepsShow = () => {
+const StepsFind = () => {
   const [image, setImage] = useState([]);
   const [password, setPassword] = useState("");
   const [finding, setFinding] = useState(false);
@@ -23,8 +22,8 @@ const StepsShow = () => {
     });
   };
   return (
-    <>
-      <FlowStep>
+    <form id="form" className="grid gap-32">
+      <div>
         <p className="mb-8">
           Add the image you want to retrieve files from within
         </p>
@@ -34,15 +33,15 @@ const StepsShow = () => {
           files={image}
           setFiles={setImage}
         />
-      </FlowStep>
-      <FlowStep>
+      </div>
+      <div>
         <p className="mb-8">
           Enter the password used to hide the files{" "}
           <span className="text-gray-400">(may be blank)</span>
         </p>
         <FormPassword value={password} onChange={setPassword} />
-      </FlowStep>
-      <FlowStep>
+      </div>
+      <div>
         <ProgressButton
           onClick={findFiles}
           progress={progress}
@@ -54,8 +53,8 @@ const StepsShow = () => {
             ? "Finding files..."
             : "Find files inside image"}
         </ProgressButton>
-      </FlowStep>
-    </>
+      </div>
+    </form>
   );
 };
-export default StepsShow;
+export default StepsFind;
